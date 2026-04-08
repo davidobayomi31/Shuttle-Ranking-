@@ -17,6 +17,7 @@ Algorithmic thinking: design the application flow that acts as a live decision t
 Input: the user would interact with the GUI to input the list of campus shuttle stops and their passanger count.
 Processig stage: the algorithm uses a quick sort. To help the user follow along, the app will highlight the Pivot in one color (e.g., Red) and the current Stops being compared in another (e.g., Yellow)
 Output: The GUI outputs the final ranked list from "most crowed" to "least crowed".
+
 -----------------------------------------------------------------------------------------
 ![IMG_1258](https://github.com/user-attachments/assets/96c83457-cee9-497a-b4ff-3fff5206423f)
 
