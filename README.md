@@ -6,6 +6,8 @@ I chose option 3, shuttle stop crowd ranking. this aplication sorts campus shutt
 The algorithm i chose for this project is quick sort. quick sort uses divide and conquer technique which i think would be efficient and can quickly rank the shuttle stops even if the list of location grows
 
 ## Demo (video/gif/screenshot of at least one run)
+<img width="1352" height="878" alt="Screenshot 2026-04-08 at 9 13 01 PM" src="https://github.com/user-attachments/assets/af95a528-a6f7-4fbc-b380-08c660c9de8c" />
+
 ## Problem Breakdown & Computational Thinking (include a flowchart + the 4 pillars as brief bullets)
 Decomposition: Breaking the sorting task into smaller steps. create a list where each element is a shuttle stop pair (["student Union", 85]. pick one stop as a pivot. group all stop with fewer people than the pivot to the left and those with more people ot the right.
 
