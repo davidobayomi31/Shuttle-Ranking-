@@ -25,8 +25,25 @@ Output: The GUI outputs the final ranked list from "most crowed" to "least crowe
 
 
 ## Steps to Run (local) + requirements.txt
+1. Clone the repository.
+2. Install dependencies using pip install -r requirements.txt.
+3. Run the app using python app.py.
+
 ## Hugging Face Link
-## Testing (what you tried + edge cases)
+Project Repository - https://huggingface.co/spaces/Davidobayomi7/Shuttle_bus_ranking
+App View - https://davidobayomi7-shuttle-bus-ranking.hf.space
+
+## Testing (what you tried + edge cases
+## Testing & Verification
+
+| Test Case | Input Data | Expected Result | Actual Result |
+| :--- | :--- | :--- | :--- |
+| **Standard Case** | `Main, 85; Union, 12; West, 45; Kingston, 60` | Full list sorted: Main, Kingston, West, Union | **Passed** |
+| **Single Item** | `Isabel Ctr, 25` | Returns single item as top priority | **Passed** |
+| **Invalid Input** | `Union, 50; West, Twenty` | Display helpful error message | **Passed** |
+
 ## Author & Acknowledgment (sources + AI use, if any)
+David obayomi
+i used Ai (gemini) to help with code structure and UI design 
 
 
