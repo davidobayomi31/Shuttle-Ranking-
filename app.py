@@ -1,80 +1,98 @@
 import gradio as gr
 
-# Manual Quick Sort implementation
-def quick_sort(arr, snapshots):
-    # Base case: if list is empty or has one item, it is sorted
+def quick_sort(arr, snapshots, full_list_ref, start_idx):
+    # Base case: if the sub-array has 0 or 1 elements, it is already sorted
     if len(arr) <= 1:
         return arr
-    
-    # Selecting the last element as the pivot
+        
+    # Choosing the last element as the pivot for partitioning
     pivot = arr[-1]
     low = []
     high = []
-    
-    # Partitioning logic: comparing each item to the pivot
+        
+    # Divide elements into 'high' (more people) and 'low' (fewer people)
     for i in range(len(arr) - 1):
-        if arr[i][1] > pivot[1]: # Sorting by highest crowd count first
+        if arr[i][1] > pivot[1]: # Higher crowd count = higher priority
             high.append(arr[i])
         else:
             low.append(arr[i])
+                    
+    # Update the reference list to show the movement in the context of the full list
+    current_partition = high + [pivot] + low + arr[i+1:-1]
+    full_list_ref[start_idx : start_idx + len(arr)] = current_partition
+    
+    # Save a copy of the current list state to the snapshots list
+    snapshots.append(list(full_list_ref))
             
-        # Record the state of the list for the visual simulation
-        snapshots.append(list(high) + [pivot] + list(low))
+    # Recursively sort the high (left) side
+    sorted_high = quick_sort(high, snapshots, full_list_ref, start_idx)
+    
+    # Place the pivot in its final sorted position within the reference list
+    mid_idx = start_idx + len(high)
+    full_list_ref[mid_idx] = pivot
+    
+    # Recursively sort the low (right) side
+    sorted_low = quick_sort(low, snapshots, full_list_ref, mid_idx + 1)
         
-    # Recursive calls to sort the sub-lists
-    return quick_sort(high, snapshots) + [pivot] + quick_sort(low, snapshots)
+    # Return the combined sorted list
+    return sorted_high + [pivot] + sorted_low
 
 def run_simulation(input_text):
     try:
-        # Parse input string into a structured list
+        # Convert the raw string input into a list of [Name, Count] pairs
         stops = []
         for item in input_text.split(";"):
             name, count = item.split(",")
             stops.append([name.strip(), int(count.strip())])
-        
-        # Check if list is empty
+                
         if not stops:
             return "Input is empty. Please provide stop data."
-            
-        # Initialize snapshots with the starting state
+                    
+        # Initialize the snapshots with the unsorted list
         snapshots = [list(stops)]
-        final_sorted = quick_sort(stops, snapshots)
         
-        # Build the simulation output string
-        output = "### Algorithm Steps\n"
+        # Create a reference list that gets modified during the recursive calls
+        full_list_ref = list(stops)
+        final_sorted = quick_sort(stops, snapshots, full_list_ref, 0)
+                
+        # Format the output using Markdown for the Gradio display
+        output = "### Algorithm Steps (Full List View)\n"
+        output += "This view shows how the algorithm reorders the entire list step-by-step.\n\n"
+        
         for i, step in enumerate(snapshots):
-            output += f"**Step {i+1}:** {step}\n\n"
-            
-        # Highlight the final decision
+            # Create a readable string for each step of the process
+            formatted_step = " | ".join([f"{s[0]} ({s[1]})" for s in step])
+            output += f"**Step {i+1}:** {formatted_step}\n\n"
+                    
         output += "---\n"
         output += f"### Priority Result\n"
         output += f"The extra shuttle should be sent to: **{final_sorted[0][0]}**"
         return output
-
     except Exception:
-        # Return a helpful error message if format is incorrect
+        # Basic error handling for malformed input
         return "Error: Please use the correct format (e.g., Stop A, 10; Stop B, 20)"
 
-# Defining a cleaner, more professional UI layout
+# Set up the Gradio interface using the Soft theme
 with gr.Blocks(theme=gr.themes.Soft()) as demo:
     gr.Markdown("# Campus Shuttle Crowd Ranking System")
-    gr.Markdown("This application uses the Quick Sort algorithm to rank shuttle stops by passenger volume.")
-    
+    gr.Markdown("Watch the Quick Sort algorithm partition and rank the full list of campus stops.")
+        
     with gr.Row():
-        # Input column
         with gr.Column():
+            # Input textbox for stop data
             input_data = gr.Textbox(
                 label="Shuttle Stop Data", 
-                placeholder="Enter as: Stop Name, Count; Stop Name, Count",
+                placeholder="Enter as: Stop A, 85; Stop B, 12; Stop C, 45",
                 lines=3
             )
             submit_btn = gr.Button("Analyze and Sort", variant="primary")
-            
-        # Output column
+                    
         with gr.Column():
+            # Area to display the step-by-step results
             output_display = gr.Markdown("The simulation results will appear here.")
-    
-    # Connecting the button to the logic
-    submit_btn.click(fn=run_simulation, inputs=input_data, outputs=output_display)
+        
+        # Link the button to the processing function
+        submit_btn.click(fn=run_simulation, inputs=input_data, outputs=output_display)
 
+# Run the app
 demo.launch()
